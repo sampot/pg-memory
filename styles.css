@@ -1,0 +1,220 @@
+/* 對對碰 — mobile-first：預設窄螢幕，寬螢幕再加間距與尺寸。 */
+:root {
+  --bg: #1b2a41;
+  --card-bg: #2c3e5d;
+  --card-line: #44567a;
+  --card-glow: #f7b731;
+  --fg: #eef2f7;
+  --muted: #9fb0c8;
+  --ok: #2ecc71;
+  --bad: #e74c3c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: system-ui, "PingFang TC", "Microsoft JhengHei", sans-serif;
+}
+
+/* ---------- 頂欄 ---------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 0.9rem;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: rgba(27, 42, 65, 0.92);
+  backdrop-filter: blur(4px);
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  letter-spacing: 0.05em;
+}
+
+.subtitle {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-right: auto;
+}
+
+.ghost,
+.primary,
+.ctrl,
+.select {
+  font-size: 1rem;
+  min-height: 44px;
+  padding: 0.55rem 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--card-line);
+  background: var(--card-bg);
+  color: var(--fg);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.ghost:hover,
+.ctrl:hover {
+  border-color: var(--card-glow);
+}
+
+.primary {
+  background: #f7b731;
+  border-color: #f7b731;
+  color: #1b2a41;
+  font-weight: 700;
+}
+
+/* ---------- 主區 ---------- */
+.game {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 0.9rem 0.9rem 2rem;
+}
+
+.setup {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
+}
+
+.setup label {
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.select {
+  padding: 0.4rem 0.8rem;
+  min-height: 40px;
+}
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.2rem;
+  margin-bottom: 0.9rem;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.stat b {
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 牌面 ---------- */
+.board {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 4), 1fr);
+  gap: clamp(4px, 1.6vw, 10px);
+  margin-bottom: 1rem;
+}
+
+.cell {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  border-radius: 10px;
+  border: 1px solid var(--card-line);
+  background: var(--card-bg);
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  touch-action: manipulation;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cell img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.cell.open {
+  border-color: var(--card-glow);
+  box-shadow: 0 0 0 2px rgba(247, 183, 49, 0.35);
+}
+
+.cell.matched {
+  border-color: var(--ok);
+  background: rgba(46, 204, 113, 0.15);
+  cursor: default;
+}
+
+.cell.matched .face {
+  font-size: 1.6rem;
+  color: var(--ok);
+}
+
+.cell.hinted {
+  border-color: var(--card-glow);
+  box-shadow: 0 0 0 3px rgba(247, 183, 49, 0.55);
+}
+
+/* ---------- 狀態與控制 ---------- */
+.status {
+  min-height: 1.5em;
+  margin: 0 0 0.9rem;
+  text-align: center;
+  font-size: 1rem;
+  color: var(--muted);
+}
+
+.status[data-tone="win"] {
+  color: var(--ok);
+  font-weight: 600;
+}
+
+.controls {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: center;
+}
+
+.controls button {
+  flex: 1;
+  max-width: 180px;
+}
+
+.meta {
+  margin-top: 1.4rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+/* ---------- 寬螢幕 ---------- */
+@media (min-width: 560px) {
+  .game {
+    padding-top: 1.5rem;
+  }
+
+  .board {
+    gap: 12px;
+  }
+
+  .stats {
+    gap: 0.4rem 1.6rem;
+    font-size: 1rem;
+  }
+}

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#1b2a41" />
+    <title>對對碰</title>
+    <meta
+      name="description"
+      content="對對碰——經典翻牌配對遊戲：翻開兩張牌找相同，全部配對完成即過關。"
+    />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🃏</text></svg>" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <h1>對對碰</h1>
+      <span class="subtitle">翻牌配對</span>
+      <button id="btn-music" type="button" class="ghost" aria-label="切換聲音">聲音開</button>
+    </header>
+
+    <main class="game">
+      <div class="setup">
+        <label for="grid-size">盤面</label>
+        <select id="grid-size" class="select">
+          <option value="4x4">4×4（8 對）</option>
+          <option value="6x6">6×6（18 對）</option>
+        </select>
+      </div>
+
+      <div class="stats">
+        <span class="stat">步數 <b id="stat-moves">0</b></span>
+        <span class="stat">配對 <b id="stat-matches">0/8</b></span>
+        <span class="stat">連對 <b id="stat-combo">×0</b></span>
+        <span class="stat">時間 <b id="stat-time">00:00</b></span>
+      </div>
+
+      <div id="board" class="board" role="grid"></div>
+
+      <p id="status" class="status">翻開兩張相同的牌來配對。</p>
+
+      <div class="controls">
+        <button id="btn-hint" type="button" class="ctrl">提示</button>
+        <button id="btn-new" type="button" class="primary">新一局</button>
+      </div>
+
+      <footer class="meta">
+        <span>最佳紀錄：<b id="best-label">—</b></span>
+      </footer>
+    </main>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
