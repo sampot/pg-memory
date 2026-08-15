@@ -174,23 +174,40 @@ describe("hint", () => {
     expect(h.card).toBeGreaterThanOrEqual(0);
   });
 
-  it("suggests a known matching pair when one exists", () => {
+  it("does not reveal an unseen mate after seeing only one of a pair", () => {
     const g = newGame({ pairs: 4 });
     let s = g;
-    // flip two different cards to know two ids
     s = flip(s, 0).state;
     const other = g.cards.findIndex((c) => c.id !== g.cards[0].id);
     s = flip(s, other).state;
     s = collapse(s);
-    // now the hint should be able to pair up a known card with an unseen mate
     const h = hint(s);
     expect(h).not.toBeNull();
-    if (h.kind === "pair") {
-      expect(s.cards[h.cards[0]].id).toBe(s.cards[h.cards[1]].id);
-      expect(s.cards[h.cards[0]].matched).toBe(false);
-    }
+    // Only two positions were seen; their ids differ → explore, not a free pair.
+    expect(h.kind).toBe("explore");
+    expect(s.seen.has(h.card)).toBe(false);
   });
 
+  it("suggests a pair only when both positions were actually seen", () => {
+    const g = newGame({ pairs: 3, rand: () => 0.5 });
+    const id = g.cards[0].id;
+    const mates = g.cards
+      .map((c, i) => (c.id === id ? i : -1))
+      .filter((i) => i >= 0);
+    expect(mates).toHaveLength(2);
+    let s = g;
+    // See both mates across two mismatches with a decoy.
+    const decoy = g.cards.findIndex((c) => c.id !== id);
+    s = flip(s, mates[0]).state;
+    s = flip(s, decoy).state;
+    s = collapse(s);
+    s = flip(s, mates[1]).state;
+    s = flip(s, decoy).state;
+    s = collapse(s);
+    const h = hint(s);
+    expect(h.kind).toBe("pair");
+    expect(new Set(h.cards)).toEqual(new Set(mates));
+  });
   it("returns null once the game is over", () => {
     const g = newGame({ pairs: 1 });
     let s = g;

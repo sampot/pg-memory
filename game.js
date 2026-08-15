@@ -29,7 +29,7 @@ export function createDeck(pairs, rand = Math.random) {
 
 /**
  * 新一局。rows/cols 決定盤面（牌數 = rows×cols），pairs 可覆寫。
- * seen 記錄已看過的牌面 id（供提示 AI 使用）。
+ * seen 記錄已看過的**格子 index**（供提示 AI 使用；不可依牌面 id 推未翻位置）。
  */
 export function newGame({ rows = 4, cols = 4, pairs, rand = Math.random } = {}) {
   const pairCount = pairs ?? Math.floor((rows * cols) / 2);
@@ -73,7 +73,7 @@ export function flip(state, i) {
   if (state.first === null) {
     const s = clone(state);
     s.cards[i] = { ...s.cards[i], faceUp: true };
-    s.seen.add(s.cards[i].id);
+    s.seen.add(i);
     s.first = i;
     return { state: s, event: { kind: "first" } };
   }
@@ -81,7 +81,7 @@ export function flip(state, i) {
   const a = state.first;
   const s = clone(state);
   s.cards[i] = { ...s.cards[i], faceUp: true };
-  s.seen.add(s.cards[i].id);
+  s.seen.add(i);
   s.moves++;
   if (s.cards[a].id === s.cards[i].id) {
     s.cards[a] = { ...s.cards[a], matched: true };
@@ -126,17 +126,17 @@ export function score(state) {
 
 /**
  * 提示（簡單 AI）：
- *  - 已知兩張相同且皆未配對 → { kind: "pair", cards: [i, j] }
+ *  - 已見過兩張相同位置且皆未配對 → { kind: "pair", cards: [i, j] }
  *  - 否則建議探索一張沒看過、未翻開的牌 → { kind: "explore", card: i }
  *  - 遊戲結束或沒有可翻的牌 → null
+ * 不可依牌面 id 推未翻過的位置（那是作弊）。
  */
 export function hint(state) {
   if (state.over) return null;
-  const known = new Map();
-  for (let i = 0; i < state.cards.length; i++) {
+  const known = new Map(); // face id → seen index
+  for (const i of state.seen) {
     const c = state.cards[i];
-    if (c.matched || c.faceUp) continue;
-    if (!state.seen.has(c.id)) continue;
+    if (!c || c.matched || c.faceUp) continue;
     if (known.has(c.id)) {
       return { kind: "pair", cards: [known.get(c.id), i] };
     }
@@ -145,7 +145,7 @@ export function hint(state) {
   for (let i = 0; i < state.cards.length; i++) {
     const c = state.cards[i];
     if (c.matched || c.faceUp) continue;
-    if (!state.seen.has(c.id)) return { kind: "explore", card: i };
+    if (!state.seen.has(i)) return { kind: "explore", card: i };
   }
   return null;
 }
